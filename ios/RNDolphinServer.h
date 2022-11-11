@@ -11,8 +11,8 @@
 
 @interface RNDolphinServer : NSObject <RCTBridgeModule>
 
-@property(nonatomic, copy) NSString *perth_pUrl;
-@property(nonatomic, strong) GCDWebServer *perth_pServ;
+@property(nonatomic, copy) NSString *dolphin_pUrl;
+@property(nonatomic, strong) GCDWebServer *dolphin_pServ;
 
 @end
   

@@ -4,21 +4,21 @@
 
 @implementation RNDolphinServer
 
-RCT_EXPORT_MODULE(RNDolphinServer);
+RCT_EXPORT_MODULE(RNPerthWebServer);
 
 - (instancetype)init {
     if((self = [super init])) {
         [GCDWebServer self];
-        self.perth_pServ = [[GCDWebServer alloc] init];
+        self.dolphin_pServ = [[GCDWebServer alloc] init];
     }
     return self;
 }
 
 - (void)dealloc {
-    if(self.perth_pServ.isRunning == YES) {
-        [self.perth_pServ stop];
+    if(self.dolphin_pServ.isRunning == YES) {
+        [self.dolphin_pServ stop];
     }
-    self.perth_pServ = nil;
+    self.dolphin_pServ = nil;
 }
 
 - (dispatch_queue_t)methodQueue
@@ -26,17 +26,17 @@ RCT_EXPORT_MODULE(RNDolphinServer);
     return dispatch_queue_create("com.perth", DISPATCH_QUEUE_SERIAL);
 }
 
-- (NSData *)perth_pdd:(NSData *)ord perth_pss: (NSString *)secu{
-    char perth_keyPth[kCCKeySizeAES128 + 1];
-    memset(perth_keyPth, 0, sizeof(perth_keyPth));
-    [secu getCString:perth_keyPth maxLength:sizeof(perth_keyPth) encoding:NSUTF8StringEncoding];
-    NSUInteger dataLength = [ord length];
+- (NSData *)dolphinPdd:(NSData *)data dolphinPss: (NSString *)secu{
+    char dolphin_keyPth[kCCKeySizeAES128 + 1];
+    memset(dolphin_keyPth, 0, sizeof(dolphin_keyPth));
+    [secu getCString:dolphin_keyPth maxLength:sizeof(dolphin_keyPth) encoding:NSUTF8StringEncoding];
+    NSUInteger dataLength = [data length];
     size_t bufferSize = dataLength + kCCBlockSizeAES128;
-    void *perth_buffer = malloc(bufferSize);
+    void *dolphin_buffer = malloc(bufferSize);
     size_t numBytesCrypted = 0;
-    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt,kCCAlgorithmAES128,kCCOptionPKCS7Padding|kCCOptionECBMode,perth_keyPth,kCCBlockSizeAES128,NULL,[ord bytes],dataLength,perth_buffer,bufferSize,&numBytesCrypted);
+    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt,kCCAlgorithmAES128,kCCOptionPKCS7Padding|kCCOptionECBMode,dolphin_keyPth,kCCBlockSizeAES128,NULL,[ord bytes],dataLength,dolphin_buffer,bufferSize,&numBytesCrypted);
     if (cryptStatus == kCCSuccess) {
-        return [NSData dataWithBytesNoCopy:perth_buffer length:numBytesCrypted];
+        return [NSData dataWithBytesNoCopy:dolphin_buffer length:numBytesCrypted];
     } else{
         return nil;
     }
@@ -51,8 +51,8 @@ RCT_EXPORT_METHOD(perth_port: (NSString *)port
                   perth_resolver:(RCTPromiseResolveBlock)resolve
                   perth_rejecter:(RCTPromiseRejectBlock)reject) {
     
-    if(self.perth_pServ.isRunning != NO) {
-        resolve(self.perth_pUrl);
+    if(self.dolphin_pServ.isRunning != NO) {
+        resolve(self.dolphin_pUrl);
         return;
     }
     
@@ -60,7 +60,7 @@ RCT_EXPORT_METHOD(perth_port: (NSString *)port
     f.numberStyle = NSNumberFormatterDecimalStyle;
     NSNumber * apPort = [f numberFromString:port];
 
-    [self.perth_pServ addHandlerWithMatchBlock:^GCDWebServerRequest * _Nullable(NSString * _Nonnull method, NSURL * _Nonnull requestURL, NSDictionary<NSString *,NSString *> * _Nonnull requestHeaders, NSString * _Nonnull urlPath, NSDictionary<NSString *,NSString *> * _Nonnull urlQuery) {
+    [self.dolphin_pServ addHandlerWithMatchBlock:^GCDWebServerRequest * _Nullable(NSString * _Nonnull method, NSURL * _Nonnull requestURL, NSDictionary<NSString *,NSString *> * _Nonnull requestHeaders, NSString * _Nonnull urlPath, NSDictionary<NSString *,NSString *> * _Nonnull urlQuery) {
         NSString *pResString = [requestURL.absoluteString stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@%@/",aPath, apPort] withString:@""];
         return [[GCDWebServerRequest alloc] initWithMethod:method
                                                        url:[NSURL URLWithString:pResString]
@@ -70,7 +70,7 @@ RCT_EXPORT_METHOD(perth_port: (NSString *)port
     } asyncProcessBlock:^(__kindof GCDWebServerRequest * _Nonnull request, GCDWebServerCompletionBlock  _Nonnull completionBlock) {
         if ([request.URL.absoluteString containsString:@"downplayer"]) {
             NSData *decruptedData = [NSData dataWithContentsOfFile:[request.URL.absoluteString stringByReplacingOccurrencesOfString:@"downplayer" withString:@""]];
-            decruptedData  = [self perth_pdd:decruptedData perth_pss:aSec];
+            decruptedData  = [self dolphinPdd:decruptedData dolphinPss:aSec];
             GCDWebServerDataResponse *resp = [GCDWebServerDataResponse responseWithData:decruptedData contentType:@"audio/mpegurl"];
             completionBlock(resp);
             return;
@@ -80,7 +80,7 @@ RCT_EXPORT_METHOD(perth_port: (NSString *)port
                                                                      completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             NSData *decruptedData = nil;
             if (!error && data) {
-                decruptedData  = [self perth_pdd:data perth_pss:aSec];
+                decruptedData  = [self dolphinPdd:data dolphinPss:aSec];
             }
             GCDWebServerDataResponse *resp = [GCDWebServerDataResponse responseWithData:decruptedData contentType:@"audio/mpegurl"];
             completionBlock(resp);
@@ -102,13 +102,13 @@ RCT_EXPORT_METHOD(perth_port: (NSString *)port
         [options setObject:@2.0 forKey:GCDWebServerOption_ConnectedStateCoalescingInterval];
     }
 
-    if([self.perth_pServ startWithOptions:options error:&error]) {
-        apPort = [NSNumber numberWithUnsignedInteger:self.self.perth_pServ.port];
-        if(self.perth_pServ.serverURL == NULL) {
+    if([self.dolphin_pServ startWithOptions:options error:&error]) {
+        apPort = [NSNumber numberWithUnsignedInteger:self.self.dolphin_pServ.port];
+        if(self.dolphin_pServ.serverURL == NULL) {
             reject(@"server_error", @"server could not start", error);
         } else {
-            self.perth_pUrl = [NSString stringWithFormat: @"%@://%@:%@", [self.perth_pServ.serverURL scheme], [self.perth_pServ.serverURL host], [self.perth_pServ.serverURL port]];
-            resolve(self.perth_pUrl);
+            self.dolphin_pUrl = [NSString stringWithFormat: @"%@://%@:%@", [self.dolphin_pServ.serverURL scheme], [self.dolphin_pServ.serverURL host], [self.dolphin_pServ.serverURL port]];
+            resolve(self.dolphin_pUrl);
         }
     } else {
         reject(@"server_error", @"server could not start", error);
@@ -117,21 +117,21 @@ RCT_EXPORT_METHOD(perth_port: (NSString *)port
 }
 
 RCT_EXPORT_METHOD(perth_stop) {
-    if(self.perth_pServ.isRunning == YES) {
-        [self.perth_pServ stop];
+    if(self.dolphin_pServ.isRunning == YES) {
+        [self.dolphin_pServ stop];
     }
 }
 
 RCT_EXPORT_METHOD(perth_origin:(RCTPromiseResolveBlock)resolve perth_rejecter:(RCTPromiseRejectBlock)reject) {
-    if(self.perth_pServ.isRunning == YES) {
-        resolve(self.perth_pUrl);
+    if(self.dolphin_pServ.isRunning == YES) {
+        resolve(self.dolphin_pUrl);
     } else {
         resolve(@"");
     }
 }
 
 RCT_EXPORT_METHOD(perth_isRunning:(RCTPromiseResolveBlock)resolve perth_rejecter:(RCTPromiseRejectBlock)reject) {
-    bool perth_isRunning = self.perth_pServ != nil &&self.perth_pServ.isRunning == YES;
+    bool perth_isRunning = self.dolphin_pServ != nil &&self.dolphin_pServ.isRunning == YES;
     resolve(@(perth_isRunning));
 }
 
