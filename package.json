@@ -1,6 +1,6 @@
 {
   "name": "react-native-dolphin-server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A ReactNative CardView Component for android and iOS",
   "main": "index.js",
   "scripts": {
@@ -24,8 +24,5 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/dorislynch/DolphinServer.git"
-  },
-  "files": [
-    "ios/RNDolphinServer.podspec"
-  ]
+  }
 }

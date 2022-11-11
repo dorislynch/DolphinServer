@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "RNDolphinServer"
-  s.version      = "1.0.3"
+  s.version      = "1.0.5"
   s.summary      = "RNDolphinServer"
   s.description  = <<-DESC
                   RNDolphinServer
