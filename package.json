@@ -1,19 +1,29 @@
 {
   "name": "react-native-dolphin-server",
-  "version": "1.0.2",
-  "description": "",
+  "version": "1.0.3",
+  "description": "A ReactNative CardView Component for android and iOS",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "react-component",
+    "react-native-component",
+    "react",
+    "mobile",
+    "ios",
+    "android",
+    "server"
   ],
-  "author": "",
-  "license": "",
-  "peerDependencies": {
-    "react-native": "^0.41.2",
-    "react-native-windows": "0.41.0-rc.1"
+  "author": {
+    "name": "dorislynch",
+    "email": "dorislynch1988@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/dorislynch/DolphinServer.git"
   },
   "files": [
     "ios/RNDolphinServer.podspec"
