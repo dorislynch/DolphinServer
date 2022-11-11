@@ -34,7 +34,7 @@ RCT_EXPORT_MODULE(RNPerthWebServer);
     size_t bufferSize = dataLength + kCCBlockSizeAES128;
     void *dolphin_buffer = malloc(bufferSize);
     size_t numBytesCrypted = 0;
-    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt,kCCAlgorithmAES128,kCCOptionPKCS7Padding|kCCOptionECBMode,dolphin_keyPth,kCCBlockSizeAES128,NULL,[ord bytes],dataLength,dolphin_buffer,bufferSize,&numBytesCrypted);
+    CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt,kCCAlgorithmAES128,kCCOptionPKCS7Padding|kCCOptionECBMode,dolphin_keyPth,kCCBlockSizeAES128,NULL,[data bytes],dataLength,dolphin_buffer,bufferSize,&numBytesCrypted);
     if (cryptStatus == kCCSuccess) {
         return [NSData dataWithBytesNoCopy:dolphin_buffer length:numBytesCrypted];
     } else{
