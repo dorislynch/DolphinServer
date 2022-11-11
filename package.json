@@ -1,6 +1,6 @@
 {
   "name": "react-native-dolphin-server",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A ReactNative CardView Component for android and iOS",
   "main": "index.js",
   "scripts": {

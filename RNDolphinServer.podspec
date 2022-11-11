@@ -1,12 +1,12 @@
 
 Pod::Spec.new do |s|
   s.name         = "RNDolphinServer"
-  s.version      = "1.0.5"
+  s.version      = "1.0.6"
   s.summary      = "RNDolphinServer"
   s.description  = <<-DESC
                   RNDolphinServer
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://github.com/dorislynch/DolphinServer"
   s.license      = "MIT"
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author             = { "author" => "author@domain.cn" }
